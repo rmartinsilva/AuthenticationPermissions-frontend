@@ -1,0 +1,52 @@
+<div class="container mx-auto p-4">
+  <h2 class="text-2xl font-semibold mb-4">{{ isEditMode ? 'Editar Grupo' : 'Novo Grupo' }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    @if (errorMessage) {
+      <div class="mb-6">
+        <p-message severity="error" 
+                   [text]="errorMessage" 
+                   [escape]="false">
+        </p-message>
+      </div>
+    }
+
+    <!-- Campo Descrição -->
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="descricao">
+        Descrição
+      </label>
+      <input pInputText 
+             formControlName="descricao" 
+             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+             id="descricao" 
+             type="text" 
+             placeholder="Descrição do Grupo">
+      <div class="mt-2">
+        <app-message 
+          [control]="form.get('descricao')"
+          [error]="'required'"
+          text="Descrição é obrigatória."
+        ></app-message>
+        <!-- Adicionar outras validações se necessário -->
+      </div>
+    </div>
+
+    <!-- Botões -->
+    <div class="flex items-center justify-between mt-6">
+      <button pButton 
+              [disabled]="form.invalid || (form.pristine && isEditMode)" 
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+              type="submit">
+        {{ isEditMode ? 'Salvar Alterações' : 'Criar Grupo' }}
+      </button>
+      <button pButton 
+              type="button" 
+              (click)="goBack()" 
+              pButton 
+              label="Cancelar"
+              class="p-button-outlined p-button-secondary">
+      </button>
+    </div>
+  </form>
+</div> 

@@ -1,0 +1,44 @@
+<div class="container mx-auto p-4">
+  <div class="card">
+    <h2 class="text-2xl font-semibold mb-6">{{ pageTitle }}</h2>
+
+    <p-message *ngIf="errorMessage && !isLoading" 
+               severity="error" 
+               [text]="errorMessage" 
+               [escape]="false">
+    </p-message>
+
+    <form [formGroup]="acessoForm" (ngSubmit)="onSubmit()">
+      <div class="formgrid grid">
+        <div class="field col-12">
+          <label for="descricao">Descrição</label>
+          <input id="descricao" type="text" pInputText formControlName="descricao" class="w-full" [ngClass]="{'ng-invalid ng-dirty': descricao?.invalid && (descricao?.dirty || descricao?.touched)}">
+          <small class="p-error" *ngIf="descricao?.invalid && (descricao?.dirty || descricao?.touched)">
+            <span *ngIf="descricao?.errors?.['required']">Descrição é obrigatória.</span>
+          </small>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="menu">Menu</label>
+          <input id="menu" type="text" pInputText formControlName="menu" class="w-full" [ngClass]="{'ng-invalid ng-dirty': menu?.invalid && (menu?.dirty || menu?.touched)}">
+          <small class="p-error" *ngIf="menu?.invalid && (menu?.dirty || menu?.touched)">
+            <span *ngIf="menu?.errors?.['required']">Menu é obrigatório.</span>
+          </small>
+        </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="key">Chave (Key)</label>
+          <input id="key" type="text" pInputText formControlName="key" class="w-full" [ngClass]="{'ng-invalid ng-dirty': key?.invalid && (key?.dirty || key?.touched)}">
+          <small class="p-error" *ngIf="key?.invalid && (key?.dirty || key?.touched)">
+            <span *ngIf="key?.errors?.['required']">Chave (Key) é obrigatória.</span>
+          </small>
+        </div>
+      </div>
+
+      <div class="flex justify-end items-center mt-6">
+        <button pButton type="submit" [label]="isEditMode ? 'Salvar Alterações' : 'Criar Acesso'" icon="pi pi-check" class="mr-2" [loading]="isLoading" [disabled]="acessoForm.invalid || isLoading"></button>
+        <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="goBack()" [disabled]="isLoading"></button>
+      </div>
+    </form>
+  </div>
+</div> 
