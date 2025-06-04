@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { MessageModule } from 'primeng/message';
+import { MessageModule as PrimeNgMessageModule } from 'primeng/message';
 import { AcessoService } from '../../../services/acesso.service';
 import { Acesso } from '../../../shared/models/acesso.model';
 import { finalize } from 'rxjs/operators';
 import { ErrorHandlerService } from '../../../shared/error-handler.service';
+import { MessageComponent } from '../../../shared/message/message.component';
 
 @Component({
   selector: 'app-acesso-form',
@@ -20,10 +21,10 @@ import { ErrorHandlerService } from '../../../shared/error-handler.service';
     ReactiveFormsModule,
     InputTextModule,
     ButtonModule,
-    MessageModule
+    PrimeNgMessageModule,
+    MessageComponent
   ],
-  templateUrl: './acesso-form.component.html',
-  styleUrls: ['./acesso-form.component.css']
+  templateUrl: './acesso-form.component.html'
 })
 export class AcessoFormComponent implements OnInit {
   acessoForm: FormGroup;
@@ -101,7 +102,7 @@ export class AcessoFormComponent implements OnInit {
           },
           error: (err) => {
             this.errorMessage = this.errorHandlerService.formatErrorMessages(err, 'Erro ao atualizar o acesso.');
-            this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.errorMessage });
+            //this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.errorMessage });
             console.error(err);
           }
         });
@@ -119,7 +120,7 @@ export class AcessoFormComponent implements OnInit {
           },
           error: (err) => {
             this.errorMessage = this.errorHandlerService.formatErrorMessages(err, 'Erro ao criar o acesso.');
-            this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.errorMessage });
+            //this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.errorMessage });
             console.error(err);
           }
         });

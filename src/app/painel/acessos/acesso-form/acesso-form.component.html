@@ -1,44 +1,65 @@
 <div class="container mx-auto p-4">
-  <div class="card">
-    <h2 class="text-2xl font-semibold mb-6">{{ pageTitle }}</h2>
+  <h2 class="text-2xl font-semibold mb-4">{{ pageTitle }}</h2>
 
-    <p-message *ngIf="errorMessage && !isLoading" 
-               severity="error" 
-               [text]="errorMessage" 
-               [escape]="false">
+  <form [formGroup]="acessoForm" (ngSubmit)="onSubmit()" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <p-message *ngIf="errorMessage && !isLoading"
+               severity="error"
+               [text]="errorMessage"
+               [escape]="false"
+               styleClass="mb-6">
     </p-message>
 
-    <form [formGroup]="acessoForm" (ngSubmit)="onSubmit()">
-      <div class="formgrid grid">
-        <div class="field col-12">
-          <label for="descricao">Descrição</label>
-          <input id="descricao" type="text" pInputText formControlName="descricao" class="w-full" [ngClass]="{'ng-invalid ng-dirty': descricao?.invalid && (descricao?.dirty || descricao?.touched)}">
-          <small class="p-error" *ngIf="descricao?.invalid && (descricao?.dirty || descricao?.touched)">
-            <span *ngIf="descricao?.errors?.['required']">Descrição é obrigatória.</span>
-          </small>
-        </div>
-
-        <div class="field col-12 md:col-6">
-          <label for="menu">Menu</label>
-          <input id="menu" type="text" pInputText formControlName="menu" class="w-full" [ngClass]="{'ng-invalid ng-dirty': menu?.invalid && (menu?.dirty || menu?.touched)}">
-          <small class="p-error" *ngIf="menu?.invalid && (menu?.dirty || menu?.touched)">
-            <span *ngIf="menu?.errors?.['required']">Menu é obrigatório.</span>
-          </small>
-        </div>
-
-        <div class="field col-12 md:col-6">
-          <label for="key">Chave (Key)</label>
-          <input id="key" type="text" pInputText formControlName="key" class="w-full" [ngClass]="{'ng-invalid ng-dirty': key?.invalid && (key?.dirty || key?.touched)}">
-          <small class="p-error" *ngIf="key?.invalid && (key?.dirty || key?.touched)">
-            <span *ngIf="key?.errors?.['required']">Chave (Key) é obrigatória.</span>
-          </small>
-        </div>
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="descricao">Descrição</label>
+      <input id="descricao" type="text" pInputText formControlName="descricao" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Descrição do Acesso">
+      <div class="mt-2">
+        <app-message
+          [control]="acessoForm.get('descricao')"
+          error="required"
+          text="Descrição é obrigatória.">
+        </app-message>
       </div>
+    </div>
 
-      <div class="flex justify-end items-center mt-6">
-        <button pButton type="submit" [label]="isEditMode ? 'Salvar Alterações' : 'Criar Acesso'" icon="pi pi-check" class="mr-2" [loading]="isLoading" [disabled]="acessoForm.invalid || isLoading"></button>
-        <button pButton type="button" label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="goBack()" [disabled]="isLoading"></button>
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="menu">Menu</label>
+      <input id="menu" type="text" pInputText formControlName="menu" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Menu (ex: Cadastro)">
+      <div class="mt-2">
+        <app-message
+          [control]="acessoForm.get('menu')"
+          error="required"
+          text="Menu é obrigatório.">
+        </app-message>
       </div>
-    </form>
-  </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="key">Chave (Key)</label>
+      <input id="key" type="text" pInputText formControlName="key" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Chave única (ex: view_usuarios)">
+      <div class="mt-2">
+        <app-message
+          [control]="acessoForm.get('key')"
+          error="required"
+          text="Chave (Key) é obrigatória.">
+        </app-message>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mt-6">
+      <button pButton
+              type="submit"
+              [label]="isEditMode ? 'Salvar Alterações' : 'Criar Acesso'"
+              [loading]="isLoading"
+              [disabled]="acessoForm.invalid || isLoading"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+      </button>
+      <button pButton
+              type="button"
+              (click)="goBack()"
+              [disabled]="isLoading"
+              class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+        Cancelar
+      </button>
+    </div>
+  </form>
 </div> 

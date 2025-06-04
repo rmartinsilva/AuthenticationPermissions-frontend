@@ -5,8 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { MessageModule } from 'primeng/message';
+import { MessageModule as PrimeNgMessageModule } from 'primeng/message';
 import { GrupoService } from '../../../services/grupo.service';
 import { Grupo } from '../../../shared/models/grupo.model';
 import { MessageComponent } from '../../../shared/message/message.component';
@@ -22,12 +21,10 @@ import { ErrorHandlerService } from '../../../shared/error-handler.service';
     RouterModule,
     InputTextModule,
     ButtonModule,
-    CardModule,
     MessageComponent,
-    MessageModule
+    PrimeNgMessageModule
   ],
-  templateUrl: './grupo-form.component.html',
-  styleUrls: ['./grupo-form.component.scss']
+  templateUrl: './grupo-form.component.html'
 })
 export class GrupoFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -40,6 +37,7 @@ export class GrupoFormComponent implements OnInit {
 
   form!: FormGroup;
   grupoId: number | null = null;
+  isLoading: boolean = false;
   errorResponse: any = null;
   errorMessage: string | null = null;
 
@@ -71,13 +69,16 @@ export class GrupoFormComponent implements OnInit {
   }
 
   loadGrupo(id: number): void {
+    this.isLoading = true;
+    this.errorMessage = null;
     this.grupoService.getGrupoById(id).subscribe({
       next: (grupo) => {
         this.form.patchValue(grupo);
+        this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = this.errorHandlerService.formatErrorMessages(err, 'Erro ao carregar dados do grupo.');
-        this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.errorMessage });
+        this.isLoading = false;
         this.router.navigate(['/painel/grupos']);
       }
     });
@@ -96,6 +97,7 @@ export class GrupoFormComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     const grupoData = this.form.value;
 
     if (this.isEditMode && this.grupoId) {
@@ -103,23 +105,23 @@ export class GrupoFormComponent implements OnInit {
         next: () => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Grupo atualizado com sucesso!' });
           this.form.markAsPristine();
-          // Não redireciona, permite mais edições ou voltar manualmente
+          this.isLoading = false;
         },
         error: (err) => {
           this.errorMessage = this.errorHandlerService.formatErrorMessages(err, 'Erro ao atualizar grupo.');
-          //this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.errorMessage });
+          this.isLoading = false;
         }
       });
     } else {
       this.grupoService.createGrupo(grupoData).subscribe({
         next: (newGrupo) => {
           this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Grupo criado com sucesso!' });
-          // Após criar, redireciona para o modo de edição do novo grupo
+          this.isLoading = false;
           this.router.navigate(['/painel/grupos/editar', newGrupo.id]);
         },
         error: (err) => {
           this.errorMessage = this.errorHandlerService.formatErrorMessages(err, 'Erro ao criar grupo.');
-          //this.messageService.add({ severity: 'error', summary: 'Erro', detail: this.errorMessage });
+          this.isLoading = false;
         }
       });
     }

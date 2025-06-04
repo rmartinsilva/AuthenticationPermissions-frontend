@@ -6,7 +6,8 @@
       <div class="mb-6">
         <p-message severity="error" 
                    [text]="errorMessage" 
-                   [escape]="false">
+                   [escape]="false"
+                   styleClass="w-full">
         </p-message>
       </div>
     }
@@ -25,27 +26,27 @@
       <div class="mt-2">
         <app-message 
           [control]="form.get('descricao')"
-          [error]="'required'"
+          error="required"
           text="Descrição é obrigatória."
         ></app-message>
-        <!-- Adicionar outras validações se necessário -->
       </div>
     </div>
 
     <!-- Botões -->
     <div class="flex items-center justify-between mt-6">
       <button pButton 
-              [disabled]="form.invalid || (form.pristine && isEditMode)" 
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
-              type="submit">
-        {{ isEditMode ? 'Salvar Alterações' : 'Criar Grupo' }}
+              type="submit"
+              [label]="isEditMode ? 'Salvar Alterações' : 'Criar Grupo'"
+              [loading]="isLoading"
+              [disabled]="form.invalid || isLoading || (form.pristine && isEditMode)" 
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
       </button>
       <button pButton 
               type="button" 
               (click)="goBack()" 
-              pButton 
               label="Cancelar"
-              class="p-button-outlined p-button-secondary">
+              [disabled]="isLoading"
+              class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
       </button>
     </div>
   </form>
