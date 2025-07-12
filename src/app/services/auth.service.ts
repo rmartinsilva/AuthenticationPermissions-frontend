@@ -1,4 +1,5 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http'; // Importar HttpClient
 import { Observable, tap, BehaviorSubject } from 'rxjs'; // Importar Observable, tap e BehaviorSubject
 import { environment } from '../../environments/environment'; // Importar environment
@@ -16,6 +17,8 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser: boolean;
 
   private apiUrl = environment.apiUrl; // Usar a URL do environment
   private http = inject(HttpClient);
@@ -27,8 +30,11 @@ export class AuthService {
   public userName$ = this.userName.asObservable(); // Observable público para o nome
 
   constructor() {
+    this.isBrowser = isPlatformBrowser(this.platformId);
     // Ao iniciar o serviço, tentar carregar dados do token existente
-    this.loadDataFromToken();
+    if (this.isBrowser) {
+      this.loadDataFromToken();
+    }
   }
 
   // Método de login atualizado com salvamento automático do token
@@ -53,28 +59,38 @@ export class AuthService {
 
   // Exemplo: Método para armazenar o token (localStorage, sessionStorage)
   saveToken(token: string): void {
-    // TODO: Implementar armazenamento seguro do token
-    localStorage.setItem('authToken', token);
-    this.decodeAndStoreData(token); // Atualizado para chamar o método unificado
+    if (this.isBrowser) {
+      // TODO: Implementar armazenamento seguro do token
+      localStorage.setItem('authToken', token);
+      this.decodeAndStoreData(token); // Atualizado para chamar o método unificado
+    }
   }
 
   // Exemplo: Método para obter o token
   getToken(): string | null {
-    return localStorage.getItem('authToken');
+    if (this.isBrowser) {
+      return localStorage.getItem('authToken');
+    }
+    return null;
   }
 
   // Verifica se o token existe e não está expirado
   isLoggedIn(): boolean {
+    if (!this.isBrowser) {
+      return false;
+    }
     const token = this.getToken();
     return !!token && !this.jwtHelper.isTokenExpired(token);
   }
 
   // Exemplo: Método para logout
   logout(): void {
-    localStorage.removeItem('authToken');
-    this.userPermissions = []; // Limpar permissões
-    this.userName.next(null); // Limpar nome do usuário
-    this.router.navigate(['/painel/login']);
+    if (this.isBrowser) {
+      localStorage.removeItem('authToken');
+      this.userPermissions = []; // Limpar permissões
+      this.userName.next(null); // Limpar nome do usuário
+      this.router.navigate(['/painel/login']);
+    }
   }
 
   // Decodifica o token e armazena as permissões e o nome do usuário
